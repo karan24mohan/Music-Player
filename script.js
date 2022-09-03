@@ -2,6 +2,9 @@ let audio = document.querySelector("#audio");
 let songName = document.querySelector(".song-name");
 let artistName = document.querySelector(".artist-name");
 let disk = document.querySelector(".disk");
+let seekBar = document.querySelector(".seek-bar");
+let currentTime = document.querySelector(".current-time");
+let songDuration = document.querySelector(".song-duration");
 let prevBtn = document.querySelector(".backward-btn");
 let playBtn = document.querySelector(".play-btn");
 let nextBtn = document.querySelector(".forward-btn");
@@ -77,6 +80,11 @@ function loadSong(i) {
   artistName.innerHTML = song.artist;
   audio.src = song.path;
   disk.style.backgroundImage = `url("${song.cover}")`;
+  currentTime.innerHTML = "00:00";
+  setTimeout(() => {
+    seekBar.max = audio.duration;
+    songDuration.innerHTML = formatTime(audio.duration);
+  }, 300);
 }
 
 function prevSong() {
@@ -98,11 +106,39 @@ function nxtSong() {
   playSong();
 }
 
+const formatTime = (time) => {
+  let min = Math.floor(time / 60);
+  if (min < 10) {
+    min = `0${min}`;
+  }
+  let sec = Math.floor(time % 60);
+  if (sec < 10) {
+    sec = `0${sec}`;
+  }
+  return `${min} : ${sec}`;
+};
+
+//Update Current Time
+setInterval(() => {
+  currentTime.value = audio.currentTime;
+  currentTime.innerHTML = formatTime(audio.currentTime);
+}, 100);
+
+//Update Seek Bar
+seekBar.addEventListener("change", () => {
+  audio.currentTime = seekBar.value;
+});
+
 //Event listeners
 playBtn.addEventListener("click", () => {
   playBtn.classList.toggle("pause");
-  const isPlaying = playBtn.classList.contains("pause");
-  if (isPlaying) {
+  // const isPlaying = playBtn.classList.contains("pause");
+  // if (isPlaying) {
+  //   pauseSong();
+  // } else {
+  //   playSong();
+  // }
+  if (playBtn.classList.contains("pause")) {
     pauseSong();
   } else {
     playSong();
